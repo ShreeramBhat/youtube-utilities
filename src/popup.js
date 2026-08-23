@@ -2,6 +2,7 @@ const DEFAULTS = {
   enabled: true,
   showNextToShowMore: true,
   forceThreadlineCollapse: true,
+  pauseChannelIntro: true,
 };
 
 const ids = Object.keys(DEFAULTS);

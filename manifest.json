@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "YouTube Utilities",
-  "version": "1.1.0",
-  "description": "Small YouTube quality-of-life tools. First: Hide replies at the bottom of a comment thread, next to Show more, without expanding nested replies.",
+  "version": "1.2.0",
+  "description": "YouTube quality-of-life tools: collapse comment threads without expanding nested replies, and pause channel homepage intro videos.",
   "permissions": ["storage", "scripting"],
   "background": {
     "service_worker": "src/background.js"
@@ -45,7 +45,7 @@
         "https://m.youtube.com/*",
         "https://youtube.com/*"
       ],
-      "js": ["src/content.js"],
+      "js": ["src/content.js", "src/channel-intro.js"],
       "css": ["src/content.css"],
       "run_at": "document_idle"
     }

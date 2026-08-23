@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = 7;
+  const VERSION = 8;
   if (window.__ythidePageHook === VERSION) return;
 
   window.__ythidePageAbort?.abort();
@@ -77,10 +77,61 @@
     collapseRenderer(marked || node);
   }
 
+  let introUserAllowed = false;
+
+  function pauseIntroEnabled() {
+    return document.documentElement.getAttribute("data-ythide-pause-intro") === "1";
+  }
+
+  function isChannelTrailerNode(node) {
+    if (!node || !node.closest) return false;
+    if (node.closest("ytd-watch-flexy")) return false;
+    if (node.closest("ytd-video-preview")) return false;
+    return !!(
+      node.closest("ytd-channel-video-player-renderer") ||
+      node.closest("yt-channel-video-player-renderer") ||
+      node.closest("#c4-player") ||
+      node.closest('ytd-player[context*="CHANNEL_TRAILER"]')
+    );
+  }
+
+  function pauseChannelIntro() {
+    if (!pauseIntroEnabled() || introUserAllowed) return;
+    const players = document.querySelectorAll(
+      "#c4-player.html5-video-player, ytd-channel-video-player-renderer .html5-video-player, yt-channel-video-player-renderer .html5-video-player"
+    );
+    players.forEach((player) => {
+      try {
+        if (typeof player.pauseVideo === "function") player.pauseVideo();
+      } catch (_) {
+        /* ignore */
+      }
+    });
+    document
+      .querySelectorAll(
+        "ytd-channel-video-player-renderer video, yt-channel-video-player-renderer video, #c4-player video"
+      )
+      .forEach((video) => {
+        try {
+          video.pause();
+          video.autoplay = false;
+        } catch (_) {
+          /* ignore */
+        }
+      });
+  }
+
   function onCommandAttr() {
-    if (document.documentElement.getAttribute("data-ythide-cmd") !== "collapse") return;
-    document.documentElement.removeAttribute("data-ythide-cmd");
-    collapseFromNode(document.querySelector("[data-ythide-target]"));
+    const cmd = document.documentElement.getAttribute("data-ythide-cmd");
+    if (cmd === "collapse") {
+      document.documentElement.removeAttribute("data-ythide-cmd");
+      collapseFromNode(document.querySelector("[data-ythide-target]"));
+      return;
+    }
+    if (cmd === "pause-intro") {
+      document.documentElement.removeAttribute("data-ythide-cmd");
+      pauseChannelIntro();
+    }
   }
 
   document.addEventListener(
@@ -97,6 +148,36 @@
   );
 
   document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.target instanceof Element && isChannelTrailerNode(event.target)) {
+        introUserAllowed = true;
+      }
+    },
+    { capture: true, signal: ac.signal }
+  );
+
+  document.addEventListener(
+    "play",
+    (event) => {
+      if (!(event.target instanceof HTMLVideoElement)) return;
+      if (!isChannelTrailerNode(event.target)) return;
+      if (!pauseIntroEnabled() || introUserAllowed) return;
+      pauseChannelIntro();
+    },
+    { capture: true, signal: ac.signal }
+  );
+
+  window.addEventListener(
+    "yt-navigate-finish",
+    () => {
+      introUserAllowed = false;
+      if (pauseIntroEnabled()) pauseChannelIntro();
+    },
+    { signal: ac.signal }
+  );
+
+  document.addEventListener(
     "ythide-collapse",
     (event) => {
       collapseFromNode(event.target);
@@ -108,8 +189,12 @@
     "message",
     (event) => {
       if (event.source !== window) return;
-      if (!event.data || event.data.source !== "ythide" || event.data.action !== "collapse") return;
-      collapseFromNode(document.querySelector("[data-ythide-target]"));
+      if (!event.data || event.data.source !== "ythide") return;
+      if (event.data.action === "collapse") {
+        collapseFromNode(document.querySelector("[data-ythide-target]"));
+        return;
+      }
+      if (event.data.action === "pause-intro") pauseChannelIntro();
     },
     { signal: ac.signal }
   );
@@ -122,4 +207,5 @@
   ac.signal.addEventListener("abort", () => mo.disconnect());
 
   window.__ythideCollapse = collapseRenderer;
+  window.__ythidePauseIntro = pauseChannelIntro;
 })();

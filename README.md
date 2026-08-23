@@ -2,7 +2,7 @@
 
 Chrome extension with small YouTube quality-of-life tools.
 
-This repo will grow. The first tool is **Hide replies**.
+This repo will grow. Tools so far: **Hide replies** and **pause channel intros**.
 
 ## Hide replies
 
@@ -13,6 +13,12 @@ YouTube often will not collapse a comment thread until every nested **Show more 
 - Clicking **Hide replies** collapses that thread immediately via YouTube’s own reply-collapse API
 - Clicking the left thread line also collapses, even if nested replies are still closed
 - Uses YouTube’s own localized “Hide replies” label when it is present in the page
+
+## Pause channel intros
+
+A creator’s homepage often autoplays a featured intro / trailer. This tool pauses that player as soon as it starts. The video stays on the page — click it if you want it to play.
+
+It only targets the channel homepage trailer (`ytd-channel-video-player-renderer` / `#c4-player`). Watch pages, Shorts, and hover previews are left alone.
 
 ## Install (unpacked)
 
@@ -28,10 +34,18 @@ If you previously loaded this as **YouTube Hide Replies**, remove that unpacked 
 
 ## Use
 
+**Hide replies**
+
 1. Open a video and expand a comment thread
 2. Scroll to the bottom of that thread — **Hide replies** sits next to **Show more replies**
 3. Click it to close the thread — you do not need to open nested replies first
 4. Or click the vertical line on the left of the thread
+
+**Channel intro**
+
+1. Open a creator’s homepage (`youtube.com/@channel`)
+2. The featured intro/trailer stays paused
+3. Click the player if you want it to play
 
 ## Permissions
 
