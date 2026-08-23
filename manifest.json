@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Utilities",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "YouTube quality-of-life tools: collapse comment threads without expanding nested replies, and pause channel homepage intro videos.",
   "permissions": ["storage", "scripting"],
   "background": {

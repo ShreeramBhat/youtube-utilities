@@ -1,5 +1,5 @@
 (() => {
-  const VERSION = 8;
+  const VERSION = 9;
   if (window.__ythidePageHook === VERSION) return;
 
   window.__ythidePageAbort?.abort();
@@ -114,7 +114,6 @@
       .forEach((video) => {
         try {
           video.pause();
-          video.autoplay = false;
         } catch (_) {
           /* ignore */
         }
@@ -158,7 +157,7 @@
   );
 
   document.addEventListener(
-    "play",
+    "playing",
     (event) => {
       if (!(event.target instanceof HTMLVideoElement)) return;
       if (!isChannelTrailerNode(event.target)) return;
@@ -172,7 +171,6 @@
     "yt-navigate-finish",
     () => {
       introUserAllowed = false;
-      if (pauseIntroEnabled()) pauseChannelIntro();
     },
     { signal: ac.signal }
   );

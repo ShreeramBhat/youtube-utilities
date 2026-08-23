@@ -8,6 +8,7 @@
   let observer = null;
   let userAllowed = false;
   let scanTimer = 0;
+  const bound = new WeakSet();
 
   function isChannelHome() {
     const path = (location.pathname || "/").replace(/\/+$/, "") || "/";
@@ -31,6 +32,24 @@
     return settings.enabled && settings.pauseChannelIntro && isChannelHome();
   }
 
+  function isTrailerVideo(video) {
+    if (!(video instanceof HTMLVideoElement)) return false;
+    if (video.closest("ytd-watch-flexy") || video.closest("ytd-video-preview")) return false;
+    return !!(
+      video.closest("ytd-channel-video-player-renderer") ||
+      video.closest("yt-channel-video-player-renderer") ||
+      video.closest("#c4-player")
+    );
+  }
+
+  function trailerVideos() {
+    return [
+      ...document.querySelectorAll(
+        "ytd-channel-video-player-renderer video, yt-channel-video-player-renderer video, #c4-player video"
+      ),
+    ].filter(isTrailerVideo);
+  }
+
   function syncFlag() {
     if (active()) {
       document.documentElement.setAttribute("data-ythide-pause-intro", "1");
@@ -40,56 +59,61 @@
   }
 
   function requestPause() {
-    if (!active() || userAllowed) {
-      if (userAllowed) observer?.disconnect();
-      return;
-    }
-    syncFlag();
+    if (!active() || userAllowed) return;
     document.documentElement.setAttribute("data-ythide-cmd", "pause-intro");
     try {
       window.postMessage({ source: "ythide", action: "pause-intro" }, "*");
     } catch (_) {
       /* ignore */
     }
-    document
-      .querySelectorAll(
-        "ytd-channel-video-player-renderer video, yt-channel-video-player-renderer video, #c4-player video"
-      )
-      .forEach((video) => {
-        try {
-          video.pause();
-          video.autoplay = false;
-        } catch (_) {
-          /* ignore */
-        }
-      });
+    trailerVideos().forEach((video) => {
+      try {
+        video.pause();
+      } catch (_) {
+        /* ignore */
+      }
+    });
   }
 
-  function schedulePause() {
+  function onTrailerPlaying(event) {
+    if (!isTrailerVideo(event.target)) return;
+    if (!active() || userAllowed) return;
+    requestPause();
+  }
+
+  function bindVideos() {
+    if (!active()) return;
+    trailerVideos().forEach((video) => {
+      if (bound.has(video)) return;
+      bound.add(video);
+      video.addEventListener("playing", onTrailerPlaying);
+      if (!video.paused && !video.ended) requestPause();
+    });
+  }
+
+  function scheduleBind() {
     if (scanTimer) return;
     scanTimer = setTimeout(() => {
       scanTimer = 0;
-      requestPause();
-    }, 50);
+      bindVideos();
+    }, 80);
   }
 
   function observe() {
     observer?.disconnect();
     if (!active()) return;
-    observer = new MutationObserver(schedulePause);
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    observer = new MutationObserver(scheduleBind);
+    const root =
+      document.querySelector("ytd-browse, ytd-page-manager, #content") ||
+      document.documentElement;
+    observer.observe(root, { childList: true, subtree: true });
   }
 
   function onNavigate() {
     userAllowed = false;
     syncFlag();
     observe();
-    requestPause();
-    requestAnimationFrame(() => {
-      requestPause();
-      setTimeout(requestPause, 250);
-      setTimeout(requestPause, 1000);
-    });
+    bindVideos();
   }
 
   document.addEventListener(
@@ -108,25 +132,9 @@
     true
   );
 
-  document.addEventListener(
-    "play",
-    (event) => {
-      if (!(event.target instanceof HTMLVideoElement)) return;
-      if (!active() || userAllowed) return;
-      if (
-        event.target.closest("ytd-channel-video-player-renderer") ||
-        event.target.closest("yt-channel-video-player-renderer") ||
-        event.target.closest("#c4-player")
-      ) {
-        requestPause();
-      }
-    },
-    true
-  );
-
   window.addEventListener("yt-navigate-finish", onNavigate);
   window.addEventListener("yt-page-data-updated", () => {
-    if (active()) schedulePause();
+    if (active()) scheduleBind();
   });
 
   try {

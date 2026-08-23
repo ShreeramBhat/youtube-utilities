@@ -16,7 +16,7 @@ YouTube often will not collapse a comment thread until every nested **Show more 
 
 ## Pause channel intros
 
-A creator’s homepage often autoplays a featured intro / trailer. This tool pauses that player as soon as it starts. The video stays on the page — click it if you want it to play.
+A creator’s homepage often autoplays a featured intro / trailer. This tool leaves the player on the page and pauses it after the first frame. Click it if you want it to play.
 
 It only targets the channel homepage trailer (`ytd-channel-video-player-renderer` / `#c4-player`). Watch pages, Shorts, and hover previews are left alone.
 
