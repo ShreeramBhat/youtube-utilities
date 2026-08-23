@@ -1,0 +1,126 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0f;
+  --card: #212121;
+  --text: #f1f1f1;
+  --muted: #aaaaaa;
+  --accent: #ff5a50;
+  --line: #3f3f3f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 340px;
+  padding: 14px 14px 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 "Roboto", "Segoe UI", system-ui, sans-serif;
+}
+
+header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+header img {
+  border-radius: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+header p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+.row + .row {
+  border-top: none;
+}
+
+.row span {
+  flex: 1;
+}
+
+.row.master {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.group {
+  margin-top: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.group .row:first-child {
+  border-radius: 10px 10px 0 0;
+}
+
+.group .row:last-child {
+  border-radius: 0 0 10px 10px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 36px;
+  height: 20px;
+  margin: 1px 0 0;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: #3f3f3f;
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s ease;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--accent);
+}
+
+input[type="checkbox"]:checked::after {
+  transform: translateX(16px);
+}
+
+.group.is-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+footer {
+  margin: 10px 2px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}

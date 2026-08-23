@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>YouTube Utilities</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="../icons/icon48.png" width="28" height="28" alt="" />
+      <div>
+        <h1>YouTube Utilities</h1>
+        <p>Small YouTube tools. First: collapse threads without opening every nested reply.</p>
+      </div>
+    </header>
+
+    <label class="row master">
+      <span>Enable on YouTube</span>
+      <input id="enabled" type="checkbox" />
+    </label>
+
+    <div class="group" id="options">
+      <label class="row">
+        <span>Hide replies at the bottom of the thread, next to “Show more replies”</span>
+        <input id="showNextToShowMore" type="checkbox" />
+      </label>
+      <label class="row">
+        <span>Click the left thread line to close, even if nested replies are still collapsed</span>
+        <input id="forceThreadlineCollapse" type="checkbox" />
+      </label>
+    </div>
+
+    <footer>
+      After updating, reload this extension and the YouTube tab. Hide replies is only at the bottom, next to Show more.
+    </footer>
+    <script src="popup.js"></script>
+  </body>
+</html>

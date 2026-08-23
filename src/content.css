@@ -1,0 +1,69 @@
+.ythide-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px 0 16px;
+  margin: 0;
+  border: none;
+  border-radius: 18px;
+  background: transparent;
+  color: #0f0f0f;
+  font: 500 14px "Roboto", "Arial", sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[dark] .ythide-btn {
+  color: #f1f1f1;
+}
+
+.ythide-btn:hover,
+.ythide-btn:focus-visible {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+html[dark] .ythide-btn:hover,
+html[dark] .ythide-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ythide-btn:focus-visible {
+  outline: 2px solid var(--yt-spec-call-to-action, #065fd4);
+  outline-offset: 1px;
+}
+
+.ythide-btn-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.ythide-top,
+.ythide-bottom {
+  display: flex;
+  align-items: center;
+  margin: 4px 0 0 0;
+}
+
+.ythide-row {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start !important;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+html.ythide-on ytd-comment-replies-renderer.ythide-open .thread-hitbox,
+html.ythide-on ytd-comment-thread-renderer:has(> #replies ytd-comment-replies-renderer.ythide-open) > .thread-hitbox,
+html.ythide-on ytd-comment-replies-renderer.ythide-open .ytSubThreadThreadline {
+  cursor: pointer;
+}
+
+html.ythide-on ytd-comment-thread-renderer ytd-comment-thread-renderer #less-replies {
+  display: none !important;
+}
