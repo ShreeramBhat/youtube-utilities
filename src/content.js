@@ -7,8 +7,6 @@
 
   const ATTR = "data-ythide";
   const BTN_CLASS = "ythide-btn";
-  const TOP_CLASS = "ythide-top";
-  const BOTTOM_CLASS = "ythide-bottom";
   const ROW_CLASS = "ythide-row";
   const OPEN_CLASS = "ythide-open";
 
@@ -172,7 +170,8 @@
       if (cont.closest(REPLIES) !== renderer) return false;
       if (isNestedInReply(cont, renderer)) return false;
       if (!isRepliesContinuation(cont)) return false;
-      return cont.getBoundingClientRect().height > 0;
+      const button = cont.querySelector("#button button");
+      return !!button && button.getBoundingClientRect().height > 0;
     });
   }
 
@@ -186,30 +185,23 @@
   }
 
   function mountBottom(renderer) {
-    const thread = renderer.closest("ytd-comment-thread-renderer") || renderer;
-    thread.querySelectorAll(`[${ATTR}]`).forEach((node) => node.remove());
-    thread.querySelectorAll(`.${ROW_CLASS}`).forEach((node) => node.classList.remove(ROW_CLASS));
-
     const conts = ownContinuations(renderer);
     const last = conts[conts.length - 1] || null;
+    const native = last?.querySelector("#button ytd-button-renderer, #button yt-button-renderer, #button button");
+    const existing = renderer.querySelector(`.${BTN_CLASS}`);
 
-    if (last) {
-      const slot = last.querySelector("#button") || last;
-      const native = slot.querySelector("ytd-button-renderer, yt-button-renderer, button");
-      if (!native) return;
-      placeNextTo(native, renderer);
+    // Keep the same button across scans so a pointer press can finish on it.
+    if (
+      native &&
+      existing?.previousElementSibling === native &&
+      existing.parentElement === native.parentElement
+    ) {
       return;
     }
+    renderer.querySelectorAll(`[${ATTR}]`).forEach((node) => node.remove());
+    renderer.querySelectorAll(`.${ROW_CLASS}`).forEach((node) => node.classList.remove(ROW_CLASS));
 
-    const expanded = renderer.querySelector("#expanded-threads");
-    if (!expanded || expanded.hidden || expanded.hasAttribute("hidden")) return;
-
-    const wrap = document.createElement("div");
-    wrap.className = BOTTOM_CLASS;
-    wrap.setAttribute(ATTR, "1");
-    const sample = renderer.querySelector("#more-replies-sub-thread, #more-replies, #less-replies");
-    wrap.appendChild(makeButton(hideLabel(renderer), () => collapse(renderer), sample));
-    expanded.appendChild(wrap);
+    if (native) placeNextTo(native, renderer);
   }
 
   function clearInjected(root) {

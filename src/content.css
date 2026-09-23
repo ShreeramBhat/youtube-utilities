@@ -43,13 +43,6 @@ html[dark] .ythide-btn:focus-visible {
   flex-shrink: 0;
 }
 
-.ythide-top,
-.ythide-bottom {
-  display: flex;
-  align-items: center;
-  margin: 4px 0 0 0;
-}
-
 .ythide-row {
   display: flex !important;
   align-items: center;

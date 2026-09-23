@@ -9,6 +9,7 @@ This repo will grow. Tools so far: **Hide replies** and **pause channel intros**
 YouTube often will not collapse a comment thread until every nested **Show more replies** is opened first. This tool adds **Hide replies** at the bottom of the thread, next to **Show more replies**, so you can close it without expanding the whole tree.
 
 - Puts **Hide replies** only at the bottom of an expanded parent thread, next to **Show more replies**
+- Once there is no parent-thread **Show more replies** control, leaves YouTube's own **Hide replies** control in place
 - Does not add Hide replies at the top or next to nested / intermediate Show more controls
 - Clicking **Hide replies** collapses that thread immediately via YouTube’s own reply-collapse API
 - Clicking the left thread line also collapses, even if nested replies are still closed
