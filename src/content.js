@@ -269,19 +269,15 @@
   }
 
   function observeComments() {
-    observer?.disconnect();
+    // Watch the whole document: comment panels (e.g. on Shorts) are created
+    // lazily when opened, after any panel-scoped observer would be attached.
+    if (observer) return;
     observer = new MutationObserver(scheduleScan);
-    const roots = document.querySelectorAll(
-      "ytd-comments, ytd-engagement-panel-section-list-renderer"
-    );
-    const targets = roots.length ? roots : [document.documentElement];
-    targets.forEach((root) => {
-      observer.observe(root, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["hidden", "aria-expanded", "expanded"],
-      });
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["hidden", "aria-expanded", "expanded"],
     });
   }
 
@@ -292,10 +288,7 @@
   }
 
   document.addEventListener("click", onDocumentClick, true);
-  window.addEventListener("yt-navigate-finish", () => {
-    observeComments();
-    scheduleScan();
-  });
+  window.addEventListener("yt-navigate-finish", scheduleScan);
   window.addEventListener("yt-page-data-updated", scheduleScan);
 
   try {
